@@ -53,7 +53,6 @@ public class UserControllerIT extends BaseIntegrationTest {
                         """);
 
         mvc.perform(requestBuilder).andExpect(status().isOk());
-
     }
 
     @Test
@@ -79,7 +78,9 @@ public class UserControllerIT extends BaseIntegrationTest {
     void getUserByIdReturnValidResponseEntity() throws Exception {
         userService.createUser(new UserRequest("Klawdia24", "klawdia@exmp.com", "password123", "Klawdia", "Kolo"));
         String newUserRequestUUID = keycloak.realm("ITM").users().search("Klawdia24").get(0).getId();
+        
         var requestBuilder = MockMvcRequestBuilders.get("/api/users/" + newUserRequestUUID);
+        
         mvc.perform(requestBuilder)
                 .andExpectAll(
                         status().isOk(),
@@ -100,7 +101,9 @@ public class UserControllerIT extends BaseIntegrationTest {
     @DisplayName("Проверка, что при попытке получить пользователя по неверному ID возвращается статус ошибки 500")
     public void getUserByIdReturnsInValidResponseEntity() throws Exception {
         String testUserUUID = String.valueOf(UUID.randomUUID());
+        
         var requestBuilder = MockMvcRequestBuilders.get("/api/users/" + testUserUUID);
+        
         mvc.perform(requestBuilder).andExpect(status().is(500));
     }
 
@@ -108,6 +111,7 @@ public class UserControllerIT extends BaseIntegrationTest {
     @DisplayName("Проверка доступа к методу `hello` для пользователя с ролью `ROLE_MODERATOR`, ожидается статус 200 OK")
     void helloTest() throws Exception {
         var requestBuilder = MockMvcRequestBuilders.get("/api/users/hello");
+        
         mvc.perform(requestBuilder)
                 .andExpect(status().isOk());
     }
@@ -117,6 +121,7 @@ public class UserControllerIT extends BaseIntegrationTest {
     @DisplayName("Проверка, что доступ к методу `hello` для пользователя без роли `ROLE_MODERATOR` запрещен, ожидается статус 403 Forbidden")
     void helloWithoutAuthorities() throws Exception {
         var requestBuilder = MockMvcRequestBuilders.get("/api/users/hello");
+        
         mvc.perform(requestBuilder)
                 .andExpect(status().isForbidden());
     }
